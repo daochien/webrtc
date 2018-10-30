@@ -22,15 +22,33 @@ app.set('port', port);
 var server = http.createServer(app);
 
 var io = require('socket.io')(server);
+var users =[];
 
 io.on('connection', function(client){
   console.log('Client vs Server is connected ' + client.id);
 
   client.on('disconnect', function(){
     console.log(client.id + ' disconnect');
+    for( var i=0, len = users.length; i<len; ++i ){
+        var c = users[i];
+
+        if(c.clientId == client.id){
+            users.splice(i,1);
+            break;
+        }
+    }
   });
 
- 
+  client.on('setId', function(data){
+    var clientInfo = new Object();
+    
+    clientInfo.customId = data;
+    clientInfo.clientId = client.id;
+
+    users.push(clientInfo);
+    console.log(users);
+  });
+
   client.on('send-all', function(data){
     io.sockets.emit('sever-send-all', data);
   });

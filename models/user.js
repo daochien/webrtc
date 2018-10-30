@@ -19,6 +19,23 @@ module.exports.createUser  = function(newUser){
             newUser.password = hash;
             newUser.save();
         });
+    });    
+}
+
+module.exports.getUserByEmail = function(email, callback){
+    var query = {email: email};
+    User.findOne(query, callback);
+}
+
+module.exports.comparePass = function(pass, hash, callback){
+    bcrypt.compare(pass, hash, function(err, isMatch){
+        if(err){
+            throw err;
+        }
+        callback(null, isMatch);
     });
-    
+}
+
+module.exports.getUserById = function(id, callback){
+    User.findById(id, callback);
 }

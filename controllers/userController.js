@@ -27,3 +27,10 @@ exports.create = function(req, res, next){
         res.redirect('/');
     }
 }
+
+exports.login = function(req, res, next){
+    res.render('login');
+}
+exports.signin = function(req, res, next){
+    
+}
