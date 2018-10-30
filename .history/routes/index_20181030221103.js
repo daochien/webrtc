@@ -80,6 +80,6 @@ router.get('/logout', function(req, res){
 });
 
 
-router.get('/stream', checkAuth, streamController.Stream);
+router.get('/stream', checkLogined, streamController.Stream);
 
 module.exports = router;

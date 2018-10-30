@@ -46,8 +46,7 @@ io.on('connection', function(client){
         teachers.splice(i,1);
           break;
       }
-    }
-    channelTeacher(teachers, students);
+  }
 
   });
 
@@ -61,6 +60,7 @@ io.on('connection', function(client){
 
     channelTeacher(teachers, students);
     
+
     console.log(students);
   });
   //luu thong tin giao vien

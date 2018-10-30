@@ -46,8 +46,7 @@ io.on('connection', function(client){
         teachers.splice(i,1);
           break;
       }
-    }
-    channelTeacher(teachers, students);
+  }
 
   });
 
@@ -59,8 +58,13 @@ io.on('connection', function(client){
     student.socketId = client.id;
     students.push(student);
 
-    channelTeacher(teachers, students);
+    for( var i=0, len = teachers.length; i<len; ++i ){
+      var c = teachers[i];
+
+      io.to(c.socketId).emit('listStudent', students);
+    }
     
+
     console.log(students);
   });
   //luu thong tin giao vien
@@ -70,9 +74,12 @@ io.on('connection', function(client){
     teacher.userId = data.userId;
     teacher.socketId = client.id;    
     teachers.push(teacher);
+    for( var i=0, len = teachers.length; i<len; ++i ){
+      var c = teachers[i];
 
-    channelTeacher(teachers, students);
-    
+      client.emit('listStudent', students);
+    }
+    console.log(teachers);
   });
       
   client.on('send-all', function(data){
@@ -82,15 +89,6 @@ io.on('connection', function(client){
   client.on('send-all-not-sender', function(data){
     client.broadcast.emit('server-send-add-not-sender', data);
   });
-
-  function channelTeacher(teachers, students){
-    if(teachers.length > 0){
-      for( var i=0, len = teachers.length; i<len; ++i ){
-        var c = teachers[i];
-        io.to(c.socketId).emit('listStudent', students);
-      }
-    }
-  }
 
 });
 

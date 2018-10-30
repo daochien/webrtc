@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="/javascripts/jquery-1.11.1.min.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
+  </head>
+  <body>
+   
+    <h1><%= title %></h1>
+    <p>Welcome to teacher <%= user.username %></p>
+    <div class="row">
+      <div class="container" style="display: flex;">
+          <div class="col-md-8">
+                <video id="video_stream"></video>
+          </div>
+          <div class="col-md-4">
+              <% if(user.level == 1){ %>
+              <h4>Danh sách học viên</h4>
+              <ul id="list_student"></ul>
+              <% } %>
+          </div>
+      </div>  
+      
+    </div>
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+    <script>
+      var userId = '<%= user.id %>';
+      var userLevel = '<%= user.level %>';
+      var userName = '<%= user.username %>';
+      var socket = io.connect("http://localhost:3000/");
+     
+      //set Sokect Id
+      socket.on('connect', function(data){
+          if(userLevel === '2'){                
+                socket.emit('student', {userId:userId, userName: userName});
+          }            
+          if(userLevel === '1'){
+                
+                socket.emit('teacher', {userId:userId, userName: userName});
+          } 
+      });
+      
+      socket.on('listStudent', function(data){
+            $.each(data, function(index, value){
+              console.log(value);
+            });
+      })
+
+      $('body').on('click', "#send-1", function(){                                 
+          socket.emit('send-all', {msg: 'Gửi tất cả ' + socket.id});                      
+      });
+     
+      $('body').on('click', "#send-2", function(){                
+        socket.emit('send-all-not-sender', {msg: 'Gửi tất cả tru user gui tin nhan'});              
+      });
+
+      socket.on('sever-send-all', function(data){
+        console.log(data.msg);
+      });
+
+      socket.on('server-send-add-not-sender', function(data){
+        console.log(data.msg);
+      });
+
+    </script>
+  </body>
+</html>

@@ -27,7 +27,7 @@ var teachers = [];
 
 io.on('connection', function(client){
   console.log('Client vs Server is connected ' + client.id);
-  
+
   client.on('disconnect', function(){
     console.log(client.id + ' disconnect');
     for( var i=0, len = students.length; i<len; ++i ){
@@ -38,43 +38,18 @@ io.on('connection', function(client){
             break;
         }
     }
-
-    for( var i=0, len = teachers.length; i<len; ++i ){
-      var c = teachers[i];
-
-      if(c.socketId == client.id){
-        teachers.splice(i,1);
-          break;
-      }
-    }
-    channelTeacher(teachers, students);
-
   });
 
-  //luu thong tin hoc vien
+  //luu thong tin client
   client.on('student', function(data){
     var student = new Object();
     student.userName = data.userName;
     student.userId = data.userId;
     student.socketId = client.id;
     students.push(student);
-
-    channelTeacher(teachers, students);
-    
-    console.log(students);
+    console.log(data);
   });
-  //luu thong tin giao vien
-  client.on('teacher', function(data){
-    var teacher = new Object();
-    teacher.userName = data.userName;
-    teacher.userId = data.userId;
-    teacher.socketId = client.id;    
-    teachers.push(teacher);
-
-    channelTeacher(teachers, students);
-    
-  });
-      
+  
   client.on('send-all', function(data){
     io.sockets.emit('sever-send-all', data);
   });
@@ -82,15 +57,6 @@ io.on('connection', function(client){
   client.on('send-all-not-sender', function(data){
     client.broadcast.emit('server-send-add-not-sender', data);
   });
-
-  function channelTeacher(teachers, students){
-    if(teachers.length > 0){
-      for( var i=0, len = teachers.length; i<len; ++i ){
-        var c = teachers[i];
-        io.to(c.socketId).emit('listStudent', students);
-      }
-    }
-  }
 
 });
 

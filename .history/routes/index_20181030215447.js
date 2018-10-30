@@ -5,7 +5,6 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 // Require controller modules.
 var userController = require('../controllers/userController');
-var streamController = require('../controllers/streamController');
 
 passport.use(new LocalStrategy({
   usernameField: 'email',
@@ -78,8 +77,4 @@ router.get('/logout', function(req, res){
   req.logout();
   res.redirect('/login');
 });
-
-
-router.get('/stream', checkAuth, streamController.Stream);
-
 module.exports = router;
